@@ -8,7 +8,7 @@ cd asteroid/logdna-kitchen/src
 
 go build -x -o ../runtime/bin/logdna-feeder cmd/logdna-feeder/main.go
 
-# to execite
+# to execute
 export LOGDNA_API_KEY=your_LOGDNA_API_KEY
 
 ../runtime/bin/logdna-feeder --hostname='logdna-feeder-host' --log-file-name='logdna-feeder-filename'
