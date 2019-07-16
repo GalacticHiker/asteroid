@@ -25,6 +25,11 @@ func main() {
 	hostname := flag.String("hostname", "", "hostname you want logs to appear from in LogDNA viewer")
 	logFileName := flag.String("log-file-name", "", "log file or app name you want logs to appear as in LogDNA viewer")
 
+	// optional
+	tick := flag.Duration("tick",  time.Duration(1)*time.Second, "Send frequency")
+	logsPerTick :=  flag.Int("logsPerTick",  1, "Number of logs to send per tick.")
+	nLogsToSend := flag.Int("nLogsToSend", 1, "Number of logs to send.")
+
 	flag.Parse()
 
 	if *hostname == "" {
@@ -51,9 +56,6 @@ func main() {
 
 	fmt.Printf("Feed pid=%d\n", os.Getpid())
 
-	tick, _ := time.ParseDuration("500ms")
-	logsPerTick := 1
-	nLogsToSend := 10
-	logdnafeeder.SendLogs(tick, logsPerTick, nLogsToSend)
+	logdnafeeder.SendLogs(*tick, *logsPerTick, *nLogsToSend)
 
 }
