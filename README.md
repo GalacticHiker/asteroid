@@ -1,6 +1,6 @@
 # asteroid
 
-# Program that send log formatted using a golang template to a logdna
+# Program that send log formatted using a golang template to a logdna server
 git clone https://github.com/GalacticHiker/asteroid.git
 
 # to build
