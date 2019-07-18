@@ -4,7 +4,7 @@
 git clone https://github.com/GalacticHiker/asteroid.git
 
 # to build
-cd asteroid/logdna-kitchen/src
+cd ~/git_repos/asteroid/src
 
 go build -x -o ../runtime/bin/logdna-feeder cmd/logdna-feeder/main.go
 
