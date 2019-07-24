@@ -6,27 +6,8 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
-	"text/template"
 	"time"
 )
-
-// NewTemplate initializes the templates
-// TODO: read templates from file
-func NewTemplate() *template.Template {
-
-	fmap := template.FuncMap{
-		"padding": Padding,
-		"level":   Level,
-	}
-
-	defaultTemplate := `{{define "default"}}application={{.AppName}}, pid={{.Pid}}, time={{.LogTime.Format "2006-01-02T15:04:05.000Z07:00" }}, sourceName={{.SourceHostname}}, sourceIP={{.SourceIP}}, seqno={{.Seqno}}, protocol={{.Protocol}}, level={{.|level}}, template={{.Template}}, size={{.LogLength}}, padding={{.|padding}}
-{{end}}`
-
-	// hard code default
-	t := template.Must(template.New("default").Funcs(fmap).Parse(defaultTemplate))
-	return t
-
-}
 
 // TemplateContext contains the data item available in the templates
 type TemplateContext struct {
@@ -43,7 +24,7 @@ type TemplateContext struct {
 }
 
 // NewTemplateContext creates a new TemplatContext and initalizes it with configuration values
-func NewTemplateContext(appName string) *TemplateContext {
+func NewTemplateContext(appName, logTemplate string) *TemplateContext {
 
 	templateContext := new(TemplateContext)
 
@@ -65,7 +46,7 @@ func NewTemplateContext(appName string) *TemplateContext {
 
 	templateContext.SourceIP = getLocalIP()
 
-	templateContext.Template = "default"
+	templateContext.Template = logTemplate
 
 	templateContext.LogLength = 300
 	templateContext.Protocol = "logdna"

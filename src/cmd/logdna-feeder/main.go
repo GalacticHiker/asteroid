@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
+	"path"
 	"time"
 
 	"github.com/ctrlrsf/logdna"
@@ -26,10 +28,11 @@ func main() {
 	logFileName := flag.String("log-file-name", "", "log file or app name you want logs to appear as in LogDNA viewer")
 
 	// optional
-	tick := flag.Duration("tick",  time.Duration(1)*time.Second, "Send frequency")
-	logsPerTick :=  flag.Int("logsPerTick",  1, "Number of logs to send per tick.")
+	tick := flag.Duration("tick", time.Duration(1)*time.Second, "Send frequency")
+	logsPerTick := flag.Int("logsPerTick", 1, "Number of logs to send per tick.")
 	nLogsToSend := flag.Int("nLogsToSend", 1, "Number of logs to send.")
 
+	logTemplate := flag.String("template", "defaultKVP", "Name of logTemplate")
 	flag.Parse()
 
 	if *hostname == "" {
@@ -52,7 +55,15 @@ func main() {
 	}
 	client := logdna.NewClient(cfg)
 
-	logdnafeeder := feeder.NewLogdnaFeeder( feeder.NewTemplateGenerator(), client)
+	// TODO o: put this somewhere more appropriate
+	ex, err := os.Executable()
+	if err != nil {
+		log.Fatalf("ERROR:%v\n", err)
+	}
+	bindir := path.Dir(ex) // trim executable name
+	os.Chdir(bindir)       // set root
+
+	logdnafeeder := feeder.NewLogdnaFeeder(feeder.NewTemplateGenerator(*logTemplate), client)
 
 	fmt.Printf("Feed pid=%d\n", os.Getpid())
 

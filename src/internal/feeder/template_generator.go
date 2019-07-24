@@ -3,6 +3,7 @@ package feeder
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"text/template"
@@ -24,21 +25,24 @@ type LogGenerator interface {
 }
 
 // NewTemplateGenerator creation
-func NewTemplateGenerator() LogGenerator {
+func NewTemplateGenerator(logTemplateName string) LogGenerator {
 
 	lg := new(TemplateGenerator)
-	lg.logTemplate = NewTemplate()
+	lg.logTemplate = LoadTemplates("../conf/example.template")
+
+	if !TemplateExists(logTemplateName) {
+		log.Fatalf("ERROR Log Template \"%s\" not loaded.", logTemplateName)
+	}
 
 	appName := "unknown"
 	appPath, err := os.Executable()
 	if err != nil {
 		fmt.Printf("WARNING: unable to get AppName, %v\n", err)
-
 	} else {
 		appName = filepath.Base(appPath)
 	}
 
-	lg.templateContext = NewTemplateContext(appName)
+	lg.templateContext = NewTemplateContext(appName, logTemplateName)
 	return lg
 }
 

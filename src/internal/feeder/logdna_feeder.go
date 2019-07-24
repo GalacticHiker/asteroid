@@ -16,7 +16,7 @@ type LogdnaFeeder struct {
 func NewLogdnaFeeder( lg LogGenerator, client *logdna.Client) *LogdnaFeeder {
 
 	logdnafeeder := new(LogdnaFeeder)
-	//logdnafeeder.fc = fc
+
 	logdnafeeder.lg = lg
 
 	logdnafeeder.client = client
