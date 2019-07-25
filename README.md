@@ -1,29 +1,30 @@
 # asteroid
 
-# Program that send log formatted using a golang template to a logdna server
+A program that sends logs formatted using a golang template to a rsyslogd:tcp:514, logdna server
+
 git clone https://github.com/GalacticHiker/asteroid.git
 
-# to build (on mac workstation)
+# Build (on mac workstation)
 cd ~/git_repos/asteroid/src
 
 go build -x -o ../runtime/bin/logdna-feeder cmd/logdna-feeder/main.go
+go build -x -o ../runtime/bin/logdna-feeder cmd/logdna-feeder/main.go
 
-# build for docker (all libraries statically linked)
+# Build for docker (all libraries statically linked)
 CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ../runtime/bin/logdna-feeder-linux cmd/logdna-feeder/main.go
 
-on centos linux vm
-/usr/local/go/bin/go build -x -o ../runtime/bin/logdna-feeder cmd/logdna-feeder/main.go
-/home/tharnett/asteroid/src
+# Build on my Centos7 VM
+/usr/local/go/bin/go build -x -o ../runtime/bin/logdna-feeder cmd/logdna-feeder/main.go/home/tharnett/asteroid/src
 
+# Design Intents
 should always be a stand-alone(NO! required support files) executable
 
 ../runtime/ is the directory footprint that is assumed when using optional file artifacts (e.g log template)
 
 if a file path starts with a '/' it is assumed to be an absolute path
 
-# to execute
+# To send log to logdna (via logdna api)
 export LOGDNA_API_KEY=your_LOGDNA_API_KEY
-
 
 ../runtime/bin/logdna-feeder --hostname='logdna-feeder-host' --log-file-name='logdna-feeder-filename' --logsPerTick=1 --nLogsToSend=10 --tick=1s
 
