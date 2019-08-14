@@ -6,6 +6,22 @@ import (
 	"github.com/ctrlrsf/logdna"
 )
 
+// LogdnaConf configuration 
+type LogdnaConf struct {
+	Hostname string
+	LogFilename string
+}
+
+// NewLogdnaConf return the default logdna configuration
+func NewLogdnaConf() *LogdnaConf {
+
+	return &LogdnaConf {
+		Hostname :  "logmill-logdna",
+		LogFilename : "logmill-file",
+	}
+
+}
+
 // LogdnaFeeder feeds logs to the logdna server
 type LogdnaFeeder struct {
 	Feed

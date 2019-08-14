@@ -6,6 +6,20 @@ import (
 	"time"
 )
 
+// TCPSyslogConf configuration 
+type TCPSyslogConf struct {
+	DestAddr string
+}
+
+// NewTCPSyslogConf return the default TCP configuration
+func NewTCPSyslogConf() *TCPSyslogConf {
+
+	return &TCPSyslogConf {
+		DestAddr :  "",
+	}
+
+}
+
 // TCPFeeder struct
 type TCPFeeder struct {
 	Feed
@@ -13,13 +27,13 @@ type TCPFeeder struct {
 }
 
 // NewTCPFeeder create a TCPfeeder
-func NewTCPFeeder(lg LogGenerator, destAddress string) *TCPFeeder {
+func NewTCPFeeder(lg LogGenerator, conf *TCPSyslogConf) *TCPFeeder {
 
 	f := new(TCPFeeder)
 
 	f.lg = lg
 
-	c, err := net.Dial("tcp", destAddress)
+	c, err := net.Dial("tcp", conf.DestAddr)
 	f.tcpconn = c
 	if err != nil {
 		log.Fatalf("Error Connecting. %v. Is rsyslogd listening?\n", err)
