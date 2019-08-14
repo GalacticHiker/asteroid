@@ -1,4 +1,4 @@
-package feeder
+package logmill
 
 import (
 	"log"

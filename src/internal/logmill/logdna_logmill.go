@@ -1,4 +1,4 @@
-package feeder
+package logmill
 
 import (
 	"time"
@@ -22,25 +22,25 @@ func NewLogdnaConf() *LogdnaConf {
 
 }
 
-// LogdnaFeeder feeds logs to the logdna server
-type LogdnaFeeder struct {
-	Feed
+// LogdnaLogmill sends logs to the logdna server
+type LogdnaLogmill struct {
+	Mill
 	client *logdna.Client
 }
 
-// NewLogdnaFeeder creates a new Logdna feeder
-func NewLogdnaFeeder( lg LogGenerator, client *logdna.Client) *LogdnaFeeder {
+// NewLogdnaLogmill creates a new Logdna Logmill
+func NewLogdnaLogmill( lg LogGenerator, client *logdna.Client) *LogdnaLogmill {
 
-	logdnafeeder := new(LogdnaFeeder)
+	logdnaLogmill := new(LogdnaLogmill)
 
-	logdnafeeder.lg = lg
+	logdnaLogmill.lg = lg
 
-	logdnafeeder.client = client
-	return logdnafeeder
+	logdnaLogmill.client = client
+	return logdnaLogmill
 }
 
 // SendLogs send the logs per the configuration
-func (f *LogdnaFeeder) SendLogs( tick time.Duration, logsPerTick int , nLogsToSend int ) {
+func (f *LogdnaLogmill) SendLogs( tick time.Duration, logsPerTick int , nLogsToSend int ) {
 
 
 	sendClock(f, tick, logsPerTick, nLogsToSend)
@@ -50,11 +50,11 @@ func (f *LogdnaFeeder) SendLogs( tick time.Duration, logsPerTick int , nLogsToSe
 
 }
 
-func (f *LogdnaFeeder) logGenerator() LogGenerator {
+func (f *LogdnaLogmill) logGenerator() LogGenerator {
 	return f.lg
 }
 
-func (f *LogdnaFeeder) writeLog(logText string) (bytesSent int64) {
+func (f *LogdnaLogmill) writeLog(logText string) (bytesSent int64) {
 
 	t := f.lg.TemplateContext().LogTime
 	f.client.Log(t, logText)

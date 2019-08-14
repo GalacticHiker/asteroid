@@ -10,14 +10,14 @@ import (
 
 	"github.com/ctrlrsf/logdna"
 	// TODO: promote this to $GOPATH?
-	"../../internal/feeder"
+	"../../internal/logmill"
 )
 
 // this is a comment
 func main() {
 
-	logdnaConf := feeder.NewLogdnaConf()
-	tcpSyslogConf := feeder.NewTCPSyslogConf()
+	logdnaConf := logmill.NewLogdnaConf()
+	tcpSyslogConf := logmill.NewTCPSyslogConf()
 
 	// logdna
 	flag.CommandLine.StringVar(&logdnaConf.Hostname, "hostname", logdnaConf.Hostname, "hostname you want logs to appear from in LogDNA viewer")
@@ -38,15 +38,15 @@ func main() {
 
 	setExeHome()
 
-	fmt.Printf("Feed pid=%d\n", os.Getpid())
+	fmt.Printf("Logmill pid=%d\n", os.Getpid())
 
 	// TODO: distinguish correct mill type base on arguments -- create a mill factory
 	
-	// feeder := feeder.NewTCPFeeder(feeder.NewTemplateGenerator(*logTemplate), tcpSyslogConf)
+	//logmill := logmill.NewTCPLogmill(logmill.NewTemplateGenerator(*logTemplate), tcpSyslogConf)
 
-	feeder := createLogdnaMill(logdnaConf, logTemplate)
+	logmill := createLogdnaMill(logdnaConf, logTemplate)
 
-	feeder.SendLogs(*tick, *logsPerTick, *nLogsToSend)
+	logmill.SendLogs(*tick, *logsPerTick, *nLogsToSend)
 
 }
 
@@ -60,7 +60,7 @@ func setExeHome() {
 	os.Chdir(bindir)       // set exe home	
 }
 
-func createLogdnaMill(conf *feeder.LogdnaConf, logTemplateName *string ) feeder.Feeder {
+func createLogdnaMill(conf *logmill.LogdnaConf, logTemplateName *string ) logmill.Logmill {
 
 	apiKey := os.Getenv("LOGDNA_API_KEY")
 
@@ -88,7 +88,7 @@ func createLogdnaMill(conf *feeder.LogdnaConf, logTemplateName *string ) feeder.
 	}
 	client := logdna.NewClient(cfg)
 
-	logdnafeeder := feeder.NewLogdnaFeeder(feeder.NewTemplateGenerator(*logTemplateName), client)
+	logdnaLogmill := logmill.NewLogdnaLogmill(logmill.NewTemplateGenerator(*logTemplateName), client)
 
-	return logdnafeeder
+	return logdnaLogmill
 }

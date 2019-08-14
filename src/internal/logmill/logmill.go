@@ -1,22 +1,22 @@
-package feeder
+package logmill
 
 import (
 	"time"
 )
 
-// Feed data and
-type Feed struct {
+// Mill data and
+type Mill struct {
 	lg LogGenerator
 }
 
-// Feeder interface
-type Feeder interface {
+// Logmill interface
+type Logmill interface {
 	SendLogs(tick time.Duration, logsPerTick, nLogsToSend int)
 	logGenerator() LogGenerator
 	writeLog(logText string) (bytesSent int64)
 }
 
-type feedState struct {
+type millState struct {
 	nLogsToSend   int
 	eof           bool
 	logsPerTick int
@@ -30,9 +30,9 @@ type feedState struct {
 
 }
 
-func newFeedState(nLogsToSend, logsPerTick int) *feedState {
+func newMillState(nLogsToSend, logsPerTick int) *millState {
 
-	fs := new(feedState)
+	fs := new(millState)
 	fs.nLogsToSend = nLogsToSend
 	fs.logsPerTick = logsPerTick
 
@@ -40,9 +40,9 @@ func newFeedState(nLogsToSend, logsPerTick int) *feedState {
 
 	return fs
 }
-func sendClock(f Feeder, tick time.Duration, logsPerTick, nLogsToSend int) {
+func sendClock(f Logmill, tick time.Duration, logsPerTick, nLogsToSend int) {
 
-	fs := newFeedState(nLogsToSend, logsPerTick)
+	fs := newMillState(nLogsToSend, logsPerTick)
 
 	defer func() {
 		time.Sleep(3 * time.Second) // drain buffers
@@ -73,7 +73,7 @@ func sendClock(f Feeder, tick time.Duration, logsPerTick, nLogsToSend int) {
 
 }
 
-func (fs *feedState) tick(f Feeder) {
+func (fs *millState) tick(f Logmill) {
 
 	nLogsToSendOnTick := fs.nLogsToSend - fs.logsSentCount
 	if nLogsToSendOnTick >= fs.logsPerTick {
@@ -97,7 +97,7 @@ func (fs *feedState) tick(f Feeder) {
 }
 
 // sendNLogs sends the specified number of logs
-func sendNLogs(f Feeder, nLogsToSendOnTick int) (int64, int, bool) {
+func sendNLogs(f Logmill, nLogsToSendOnTick int) (int64, int, bool) {
 
 	eof := false 
 
@@ -117,7 +117,7 @@ func sendNLogs(f Feeder, nLogsToSendOnTick int) (int64, int, bool) {
 
 	return bytesSent, logsSent, eof
 }
-func (fs *feedState) allLogsSent() bool {
+func (fs *millState) allLogsSent() bool {
 	if fs.logsSentCount == fs.nLogsToSend || fs.eof {
 		return true
 	}

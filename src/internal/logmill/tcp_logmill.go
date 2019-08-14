@@ -1,4 +1,4 @@
-package feeder
+package logmill
 
 import (
 	"log"
@@ -20,16 +20,16 @@ func NewTCPSyslogConf() *TCPSyslogConf {
 
 }
 
-// TCPFeeder struct
-type TCPFeeder struct {
-	Feed
+// TCPLogmill struct
+type TCPLogmill struct {
+	Mill
 	tcpconn net.Conn
 }
 
-// NewTCPFeeder create a TCPfeeder
-func NewTCPFeeder(lg LogGenerator, conf *TCPSyslogConf) *TCPFeeder {
+// NewTCPLogmill create a TCPLogmill
+func NewTCPLogmill(lg LogGenerator, conf *TCPSyslogConf) *TCPLogmill {
 
-	f := new(TCPFeeder)
+	f := new(TCPLogmill)
 
 	f.lg = lg
 
@@ -42,23 +42,23 @@ func NewTCPFeeder(lg LogGenerator, conf *TCPSyslogConf) *TCPFeeder {
 	return f
 }
 
-func (f *TCPFeeder) logGenerator() LogGenerator {
+func (f *TCPLogmill) logGenerator() LogGenerator {
 	return f.lg
 }
 
-func (f *TCPFeeder) close() {
+func (f *TCPLogmill) close() {
 	f.tcpconn.Close()
 }
 
 // SendLogs ...
-func (f *TCPFeeder) SendLogs(tick time.Duration, logsPerTick int, nLogsToSend int) {
+func (f *TCPLogmill) SendLogs(tick time.Duration, logsPerTick int, nLogsToSend int) {
 
 	sendClock(f, tick, logsPerTick, nLogsToSend)
 	f.close()
 
 }
 
-func (f *TCPFeeder) writeLog(logText string) (bytesSent int64) {
+func (f *TCPLogmill) writeLog(logText string) (bytesSent int64) {
 	payload := []byte(logText)
 
 	n, err := f.tcpconn.Write(payload)

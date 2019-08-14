@@ -1,11 +1,11 @@
-package feeder
+package logmill
 
 import (
 	"testing"
 	"text/template"
 )
 
-// usage: go test ./internal/feeder/ -v
+// usage: go test ./internal/logmill/ -v
 
 func TestTemplateLoader(t *testing.T) {
 
