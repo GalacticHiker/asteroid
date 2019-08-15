@@ -49,7 +49,7 @@ func NewTemplateContext(appName, logTemplate string) *TemplateContext {
 	templateContext.Template = logTemplate
 
 	templateContext.LogLength = 300
-	templateContext.Protocol = "logmill"		// TODO: use logmill type
+	templateContext.Protocol = "notset"
 
 	return templateContext
 }

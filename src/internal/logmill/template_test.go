@@ -9,7 +9,8 @@ import (
 
 func TestTemplateLoader(t *testing.T) {
 
-	templateContext := NewTemplateContext("HelloTest","")
+	tc := NewTemplateContext("HelloTest","")
+	tc.Protocol = "test"
 	logTemplates := LoadTemplates("../../../runtime/conf/example.template")
 
 	tl := logTemplates.Templates()
@@ -19,12 +20,12 @@ func TestTemplateLoader(t *testing.T) {
 
 	for _, tmpl := range tl {
 
-		templateContext.LogTextBuffer.Reset()
-		templateContext.Template = tmpl.Name()
-		if templateContext.Template == "allLogTemplates" {
+		tc.LogTextBuffer.Reset()
+		tc.Template = tmpl.Name()
+		if tc.Template == "allLogTemplates" {
 			continue // HACK ALERT produces a log of length 0, see template_loader
 		}
-		testOne(logTemplates, templateContext, t)
+		testOne(logTemplates, tc, t)
 
 	}
 

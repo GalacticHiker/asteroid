@@ -40,11 +40,15 @@ func main() {
 
 	fmt.Printf("Logmill pid=%d\n", os.Getpid())
 
-	// TODO: distinguish correct mill type base on arguments -- create a mill factory
+	// TODO: distinguish correct mill type based on arguments -- create a mill factory
+	lg := logmill.NewTemplateGenerator(*logTemplate)
+	tc := lg.TemplateContext();
 	
-	//logmill := logmill.NewTCPLogmill(logmill.NewTemplateGenerator(*logTemplate), tcpSyslogConf)
+	// tc.Protocol = "tcp"
+	// logmill := logmill.NewTCPLogmill(lg, tcpSyslogConf)
 
-	logmill := createLogdnaMill(logdnaConf, logTemplate)
+	tc.Protocol = "logdna"
+	logmill := createLogdnaMill(logdnaConf, lg)
 
 	logmill.SendLogs(*tick, *logsPerTick, *nLogsToSend)
 
@@ -60,7 +64,7 @@ func setExeHome() {
 	os.Chdir(bindir)       // set exe home	
 }
 
-func createLogdnaMill(conf *logmill.LogdnaConf, logTemplateName *string ) logmill.Logmill {
+func createLogdnaMill(conf *logmill.LogdnaConf, lg logmill.LogGenerator ) logmill.Logmill {
 
 	apiKey := os.Getenv("LOGDNA_API_KEY")
 
@@ -88,7 +92,7 @@ func createLogdnaMill(conf *logmill.LogdnaConf, logTemplateName *string ) logmil
 	}
 	client := logdna.NewClient(cfg)
 
-	logdnaLogmill := logmill.NewLogdnaLogmill(logmill.NewTemplateGenerator(*logTemplateName), client)
+	logdnaLogmill := logmill.NewLogdnaLogmill(lg, client)
 
 	return logdnaLogmill
 }
