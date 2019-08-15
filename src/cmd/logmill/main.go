@@ -19,6 +19,9 @@ func main() {
 	logdnaConf := logmill.NewLogdnaConf()
 	tcpSyslogConf := logmill.NewTCPSyslogConf()
 
+	// protocol 
+	protocol := flag.String("protocol", "" , "tcp | logdna  ")
+
 	// logdna
 	flag.CommandLine.StringVar(&logdnaConf.Hostname, "hostname", logdnaConf.Hostname, "hostname you want logs to appear from in LogDNA viewer")
 	flag.CommandLine.StringVar(&logdnaConf.LogFilename, "logdna-file", logdnaConf.LogFilename, "log file or app name you want logs to appear as in LogDNA viewer")
@@ -32,9 +35,12 @@ func main() {
 	logsPerTick := flag.Int("logsPerTick", 1, "Number of logs to send per tick.")
 	nLogsToSend := flag.Int("nLogsToSend", 1, "Number of logs to send.")
 
-	// format
+	// format template
 	logTemplate := flag.String("template", "defaultKVP", "Name of logTemplate")
 	flag.Parse()
+	if *protocol == "" {
+		log.Fatalf("Protocol must be tcp | logdna\n")
+	}
 
 	setExeHome()
 
@@ -44,13 +50,16 @@ func main() {
 	lg := logmill.NewTemplateGenerator(*logTemplate)
 	tc := lg.TemplateContext();
 	
-	// tc.Protocol = "tcp"
-	// logmill := logmill.NewTCPLogmill(lg, tcpSyslogConf)
+	var lm logmill.Logmill
+	if *protocol == "tcp" {
+		tc.Protocol = "tcp"
+		lm = logmill.NewTCPLogmill(lg, tcpSyslogConf)
+	} else {
+		tc.Protocol = "logdna"
+		lm = createLogdnaMill(logdnaConf, lg)
+	}
 
-	tc.Protocol = "logdna"
-	logmill := createLogdnaMill(logdnaConf, lg)
-
-	logmill.SendLogs(*tick, *logsPerTick, *nLogsToSend)
+	lm.SendLogs(*tick, *logsPerTick, *nLogsToSend)
 
 }
 

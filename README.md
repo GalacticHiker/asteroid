@@ -35,10 +35,10 @@ if a file path starts with a '/' it is assumed to be an absolute path
 ## To send logs via logdna api
 export LOGDNA_API_KEY=your_LOGDNA_API_KEY
 
-../runtime/bin/logmill --hostname='logdna-feeder-host' --logdna-file='logdna-feeder-filename' --logsPerTick=1 --nLogsToSend=10 --tick=1s
+../runtime/bin/logmill --protocol logdna --hostname='logdna-feeder-host' --logdna-file='logdna-feeder-filename' --logsPerTick=1 --nLogsToSend=10 --tick=1s
 
 ## To send logs to rsyslog tcp.  *TODO:* enabling rsyslog 
-../runtime/bin/logmill --destAddr 192.168.0.29:514 --tick=1s --logsPerTick=1 --nLogsToSend=100 --template=defaultKVP
+../runtime/bin/logmill --protocol tcp --destAddr 192.168.0.29:514 --tick=1s --logsPerTick=1 --nLogsToSend=100 --template=defaultKVP
 
 # Usage
 ## Logdna
