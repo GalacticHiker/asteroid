@@ -3,7 +3,7 @@
 logmill is a utility that sends logs formatted using a golang template at a specified rate to a rsyslogd:tcp:514, logdna server
 
 # Status
-Works on my machine. YMMV.
+Works on my machine. 😏  YMMV.
 
 Supported logging servers: Logdna API, TCP Sylog
 
@@ -51,10 +51,17 @@ export LOGDNA_API_KEY=your_LOGDNA_API_KEY
 ## Common
 
 1. tick  - the tick rate of the send clock, hardcoded to 500ms 
-2. logsPerTick - how many logs to send per tick, hardcoded to 1; so send 2 log per second
+2. logsPerTick - how many logs to send per tick, hardcoded to 1
 3. nLogsToSend - how many log to send, hardcoded to 10
 4. template -- the golang template to use default (defaultKVP)
 
+## Docker 
+```bash
+# copy to dockerfile context
+cp ../runtime/bin/logmill-linux ../docker/context
+docker build --no-cache -t logmill:v1 -f ../docker/Dockerfile ../docker/context
+docker run --rm -d logmill:v1
+```
 # TODO
 1. List default templates. With examples
 2. Argument default values
