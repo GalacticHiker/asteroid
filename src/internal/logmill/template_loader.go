@@ -8,13 +8,13 @@ import (
 // The indentation of the {{end}} must not be aligned - as it isi 'in' the templat definition
 var defaultTemplates = [...]string{
 
-	`{{define "defaultKVP"}}application={{.AppName}}, pid={{.Pid}}, time={{.LogTime.Format "2006-01-02T15:04:05.000Z07:00" }}, sourceName={{.SourceHostname}}, sourceIP={{.SourceIP}}, seqno={{.Seqno}}, protocol={{.Protocol}}, level={{.|level}}, size={{.LogLength}}, template={{.Template}}, padding={{.|padding}}
+	`{{define "defaultKVP"}}application={{.AppName}}, pid={{.Pid}}, time={{.LogTime.Format "2006-01-02T15:04:05.000Z07:00" }}, protocol={{.Protocol}}, tag={{.Tag}}, seqno={{.Seqno}}, sourceName={{.SourceHostname}}, sourceIP={{.SourceIP}}, level={{.|level}}, size={{.LogLength}}, template={{.Template}}, padding={{.|padding}}
 {{end}}`,
 
 	`{{define "defaultCSV"}}{{.AppName}}, {{.Pid}}, {{.LogTime.Format "2006-01-02T15:04:05.000Z07:00" }}, {{.SourceIP}}, {{.Seqno}}, {{.Protocol}}, {{.|level}}, {{.LogLength}}, {{.Template}}
 {{end}}`,
 
-	`{{define "short"}}{{.AppName}}, {{.Pid}}, {{.Seqno}}, {{.Template}}
+	`{{define "short"}}{{.AppName}}, {{.Pid}}, {{.Seqno}}, {{.ConstTag}}, {{.Template}}
 {{end}}`,
 
 }

@@ -22,6 +22,9 @@ func main() {
 	// protocol 
 	protocol := flag.String("protocol", "" , "tcp | logdna  ")
 
+	// tag 
+	tag := flag.String("tag", "" , "all log have this value")
+
 	// logdna
 	flag.CommandLine.StringVar(&logdnaConf.Hostname, "hostname", logdnaConf.Hostname, "hostname you want logs to appear from in LogDNA viewer")
 	flag.CommandLine.StringVar(&logdnaConf.LogFilename, "logdna-file", logdnaConf.LogFilename, "log file or app name you want logs to appear as in LogDNA viewer")
@@ -37,18 +40,21 @@ func main() {
 
 	// format template
 	logTemplate := flag.String("template", "defaultKVP", "Name of logTemplate")
+
 	flag.Parse()
+
 	if *protocol == "" {
 		log.Fatalf("Protocol must be tcp | logdna\n")
 	}
 
 	setExeHome()
 
-	fmt.Printf("Logmill pid=%d\n", os.Getpid())
+	fmt.Printf("Logmill pid=%d tag=%s\n", os.Getpid(), *tag)
 
 	// TODO: distinguish correct mill type based on arguments -- create a mill factory
 	lg := logmill.NewTemplateGenerator(*logTemplate)
 	tc := lg.TemplateContext();
+	tc.Tag = *tag
 	
 	var lm logmill.Logmill
 	if *protocol == "tcp" {

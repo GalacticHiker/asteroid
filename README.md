@@ -35,10 +35,9 @@ if a file path starts with a '/' it is assumed to be an absolute path
 ## To send logs via logdna api
 export LOGDNA_API_KEY=your_LOGDNA_API_KEY
 
-../runtime/bin/logmill --protocol logdna --hostname='logdna-feeder-host' --logdna-file='logdna-feeder-filename' --logsPerTick=1 --nLogsToSend=10 --tick=1s
 
 ## To send logs to rsyslog tcp.  *TODO:* enabling rsyslog 
-../runtime/bin/logmill --protocol tcp --destAddr 192.168.0.29:514 --tick=1s --logsPerTick=1 --nLogsToSend=100 --template=defaultKVP
+../runtime/bin/logmill --protocol tcp --destAddr 192.168.0.29:514 --tick=1s --logsPerTick=1 --nLogsToSend=10 --tag "HelloTcp" --template=defaultKVP
 
 # Usage
 ## Logdna
@@ -57,10 +56,23 @@ export LOGDNA_API_KEY=your_LOGDNA_API_KEY
 
 ## Docker 
 ```bash
-# copy to dockerfile context
-cp ../runtime/bin/logmill-linux ../docker/context
+# copy binary to dockerfile context
+cp ../runtime/bin/logmill-linux ../docker/context/bin
+# copy optional auxilary artifacts
+cp ../runtime/conf/example.template ../docker/context/conf
+
 docker build --no-cache -t logmill:v1 -f ../docker/Dockerfile ../docker/context
 docker run --rm -d logmill:v1
+
+# arguments specified on docker command, when ENTRYPOINT is defined
+docker run --rm -d logmill:v1  --protocol tcp --destAddr 192.168.0.29:514 --logsPerTick=1 --nLogsToSend=10 --tick=1s --template=defaultKVP --tag ENTRYPOINT
+
+# COMMAND command & arguments specified on docker command when CMD is specified
+docker run --rm -d logmill:v1 /logmill/bin/logmill-linux --protocol tcp --destAddr 192.168.0.29:514 --logsPerTick=1 --nLogsToSend=10 --tick=1s --template=defaultKVP --tag COMMAND
+
+# override entrypoint to get bash shell
+docker run --rm -it --entrypoint "/bin/bash" logmill:v1
+
 ```
 # TODO
 1. List default templates. With examples

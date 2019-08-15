@@ -21,6 +21,7 @@ type TemplateContext struct {
 	Protocol       string
 	Template       string
 	LogTextBuffer  *bytes.Buffer
+	Tag       string
 }
 
 // NewTemplateContext creates a new TemplatContext and initalizes it with configuration values
