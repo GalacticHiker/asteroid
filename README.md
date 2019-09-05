@@ -30,6 +30,14 @@ should always be a stand-alone executable (no required support files)
 
 if a file path starts with a '/' it is assumed to be an absolute path
 
+# Kafka Dependencies
+ Homebrew
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew install librdkafka pkg-config
+export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
+
+go build -x -o ../runtime/bin/kafka_producer cmd/kafka_producer_example/main.go
+
 # Example Usage
 
 ## To send logs via logdna api

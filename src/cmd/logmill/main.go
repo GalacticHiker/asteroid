@@ -16,22 +16,23 @@ import (
 // this is a comment
 func main() {
 
-	logdnaConf := logmill.NewLogdnaConf()
-	tcpSyslogConf := logmill.NewTCPSyslogConf()
-
 	// protocol 
-	protocol := flag.String("protocol", "" , "tcp | logdna  ")
+	protocol := flag.String("protocol", "" , "tcp | logdna | kafka ")
 
-	// tag 
-	tag := flag.String("tag", "" , "all log have this value")
+	// tcp
+	tcpSyslogConf := logmill.NewTCPSyslogConf()
+	tcpSyslogConf.DestAddr = "localhost:514" 		//default
+	flag.CommandLine.StringVar(&tcpSyslogConf.DestAddr, "destAddr", tcpSyslogConf.DestAddr, "Destination IP:port of rsyslog server")
 
 	// logdna
+	logdnaConf := logmill.NewLogdnaConf()
 	flag.CommandLine.StringVar(&logdnaConf.Hostname, "hostname", logdnaConf.Hostname, "hostname you want logs to appear from in LogDNA viewer")
 	flag.CommandLine.StringVar(&logdnaConf.LogFilename, "logdna-file", logdnaConf.LogFilename, "log file or app name you want logs to appear as in LogDNA viewer")
 
-	// tcp
-	tcpSyslogConf.DestAddr = "localhost:514" 		//default
-	flag.CommandLine.StringVar(&tcpSyslogConf.DestAddr, "destAddr", tcpSyslogConf.DestAddr, "Destination IP:port of rsyslog server")
+	// kafka
+	kafkaConf := logmill.NewKafkaConf();
+	flag.CommandLine.StringVar(&kafkaConf.Broker, "broker", kafkaConf.Broker, "Kafka Broker")
+	flag.CommandLine.StringVar(&kafkaConf.Topic, "topic", kafkaConf.Topic, "Kafka Topic")
 
 	// rate TODO: create a struct for these values
 	tick := flag.Duration("tick", time.Duration(1)*time.Second, "Send frequency")
@@ -41,10 +42,13 @@ func main() {
 	// format template
 	logTemplate := flag.String("template", "defaultKVP", "Name of logTemplate")
 
+	// tag 
+	tag := flag.String("tag", "" , "all logs have this value")
+
 	flag.Parse()
 
 	if *protocol == "" {
-		log.Fatalf("Protocol must be tcp | logdna\n")
+		log.Fatalf("Protocol must be tcp | logdna | kafka\n")
 	}
 
 	setExeHome()
@@ -60,9 +64,12 @@ func main() {
 	if *protocol == "tcp" {
 		tc.Protocol = "tcp"
 		lm = logmill.NewTCPLogmill(lg, tcpSyslogConf)
-	} else {
+	} else if *protocol == "logdna" {
 		tc.Protocol = "logdna"
-		lm = createLogdnaMill(logdnaConf, lg)
+		lm = createLogdnaMill( lg, logdnaConf)
+	} else if *protocol == "kafka" {
+		tc.Protocol = "kafka"
+		lm = logmill.NewKafkaLogmill(kafkaConf,lg)
 	}
 
 	lm.SendLogs(*tick, *logsPerTick, *nLogsToSend)
@@ -79,7 +86,7 @@ func setExeHome() {
 	os.Chdir(bindir)       // set exe home	
 }
 
-func createLogdnaMill(conf *logmill.LogdnaConf, lg logmill.LogGenerator ) logmill.Logmill {
+func createLogdnaMill( lg logmill.LogGenerator, conf *logmill.LogdnaConf) logmill.Logmill {
 
 	apiKey := os.Getenv("LOGDNA_API_KEY")
 
